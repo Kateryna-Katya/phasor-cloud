@@ -970,6 +970,12 @@ img {
     gap: 10px;
     margin-bottom: 24px;
 }
+.form-checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
 
 .form-checkbox label {
     font-size: 0.85rem;

@@ -12,22 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================
     const cursorGlow = document.querySelector('.cursor-glow');
 
-    // Включаем только на устройствах с мышью (не тачскрин)
     if (cursorGlow && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        
-        // GSAP QuickSetter для максимальной производительности (без лагов)
-        // Если GSAP не подключен, этот блок просто не сработает
         if (typeof gsap !== 'undefined') {
             const setX = gsap.quickSetter(cursorGlow, "x", "px");
             const setY = gsap.quickSetter(cursorGlow, "y", "px");
 
             window.addEventListener('mousemove', (e) => {
-                // Показываем курсор при первом движении
                 if (!cursorGlow.classList.contains('active')) {
                     cursorGlow.classList.add('active');
                 }
-                
-                // Перемещаем пятно света
                 setX(e.clientX);
                 setY(e.clientY);
             });
@@ -42,12 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.querySelector('.header__nav');
     const navLinks = document.querySelectorAll('.header__link');
 
-    // Открытие/закрытие мобильного меню
     if (burger && nav) {
         burger.addEventListener('click', () => {
             nav.classList.toggle('active');
             
-            // Смена иконки бургера (опционально)
+            // Смена иконки
             const icon = burger.querySelector('i');
             if (icon) {
                 if (nav.classList.contains('active')) {
@@ -60,12 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Закрытие меню при клике на ссылку
     if (navLinks.length > 0 && nav) {
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 nav.classList.remove('active');
-                // Возвращаем иконку меню
                 const icon = burger.querySelector('i');
                 if(icon) {
                     icon.setAttribute('data-lucide', 'menu');
@@ -75,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Эффект "Стекла" у хедера при скролле
     if (header) {
         const updateHeaderStyle = () => {
             if (window.scrollY > 20) {
@@ -93,19 +82,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==============================================
-    // 4. ГЛАВНЫЕ АНИМАЦИИ (HERO + GSAP)
+    // 4. ГЛАВНЫЕ АНИМАЦИИ (GSAP)
     // ==============================================
     if (typeof gsap !== 'undefined') {
         const heroText = document.querySelector('.hero__text-wrapper');
-        const heroBtns = document.querySelectorAll('.hero .btn'); // Точечно выбираем кнопки в hero
+        const heroBtns = document.querySelectorAll('.hero .btn');
         const heroScroll = document.querySelector('.hero__scroll');
 
-        // Устанавливаем начальные значения (скрываем), только если JS загрузился
         if (heroText) gsap.set(heroText, { y: 30, opacity: 0 });
         if (heroBtns.length > 0) gsap.set(heroBtns, { y: 20, opacity: 0 });
         if (heroScroll) gsap.set(heroScroll, { opacity: 0 });
 
-        // Таймлайн появления
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
         if (heroText) {
@@ -120,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==============================================
-    // 5. CANVAS: НЕЙРОСЕТЬ (ЧАСТИЦЫ)
+    // 5. CANVAS: НЕЙРОСЕТЬ
     // ==============================================
     const canvas = document.getElementById('hero-canvas');
     
@@ -129,13 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let width, height;
         let particles = [];
 
-        // Настройки
         const properties = {
-            particleColor: 'rgba(0, 255, 149, 0.8)', // Neon Green
+            particleColor: 'rgba(0, 255, 149, 0.8)',
             lineColor: 'rgba(0, 255, 149, 1)',
             particleRadius: 2,
-            particleCount: window.innerWidth < 768 ? 35 : 70, // Меньше на телефоне
-            lineLength: 150, // Дальность соединения
+            particleCount: window.innerWidth < 768 ? 35 : 70,
+            lineLength: 150,
             particleSpeed: 0.4
         };
 
@@ -147,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.velocityY = (Math.random() - 0.5) * properties.particleSpeed;
             }
             position() {
-                // Отталкивание от границ
                 if (this.x + this.velocityX > width && this.velocityX > 0 || this.x + this.velocityX < 0 && this.velocityX < 0) this.velocityX *= -1;
                 if (this.y + this.velocityY > height && this.velocityY > 0 || this.y + this.velocityY < 0 && this.velocityY < 0) this.velocityY *= -1;
                 this.x += this.velocityX;
@@ -205,23 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initCanvas();
         loop();
-
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            // Пересоздаем частицы только при сильном изменении, 
-            // но для простоты здесь можно просто обновить размеры
         });
     }
 
     // ==============================================
-    // 6. SCROLL ANIMATIONS (ПОЯВЛЕНИЕ БЛОКОВ)
+    // 6. SCROLL ANIMATIONS
     // ==============================================
     const scrollElements = document.querySelectorAll("[data-scroll]");
-
-    // Используем IntersectionObserver для производительности
     const observerOptions = {
-        threshold: 0.1, // Срабатывает, когда 10% элемента видно
+        threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
     };
 
@@ -229,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add("in-view");
-                observer.unobserve(entry.target); // Анимируем только один раз
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
@@ -238,12 +218,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==============================================
-    // 7. ЛОГИКА ФОРМЫ (CAPTCHA + ОТПРАВКА)
+    // 7. ЛОГИКА ФОРМЫ (ВАЛИДАЦИЯ + CAPTCHA)
     // ==============================================
     const contactForm = document.getElementById('contactForm');
     
     if (contactForm) {
-        // Генерация простого примера
+        
+        // --- ВАЛИДАЦИЯ ТЕЛЕФОНА (ТОЛЬКО ЦИФРЫ) ---
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                // Удаляем всё, что не является цифрой или плюсом (для кода страны)
+                // Если нужно строго БЕЗ плюса, используйте: /[^0-9]/g
+                this.value = this.value.replace(/[^0-9+]/g, '');
+            });
+        }
+        // -----------------------------------------
+
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
         const sum = num1 + num2;
@@ -259,31 +250,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Проверка капчи
             const userAnswer = document.getElementById('captchaAnswer');
             if (userAnswer && parseInt(userAnswer.value) !== sum) {
-                alert('Ошибка в вычислении! Попробуйте снова.');
+                alert('Неверное решение примера! Попробуйте снова.');
                 userAnswer.value = '';
                 return;
             }
 
-            // Имитация отправки (AJAX)
+            // Имитация отправки
             const btn = contactForm.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
             
             btn.textContent = 'Отправка...';
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
             setTimeout(() => {
-                // Скрываем форму, показываем успех
                 contactForm.style.display = 'none';
                 const successMsg = document.getElementById('formSuccess');
                 if (successMsg) successMsg.style.display = 'block';
-                
-                // Очистка (для следующего раза, если нужно)
                 contactForm.reset();
             }, 1500);
         });
     }
-
 
     // ==============================================
     // 8. COOKIE POPUP
@@ -292,11 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const acceptBtn = document.getElementById('acceptCookies');
 
     if (cookiePopup && acceptBtn) {
-        // Проверяем localStorage
         if (!localStorage.getItem('phasorCookiesAccepted')) {
             setTimeout(() => {
                 cookiePopup.classList.add('active');
-            }, 2500); // Показываем через 2.5 сек после захода
+            }, 2500);
         }
 
         acceptBtn.addEventListener('click', () => {
